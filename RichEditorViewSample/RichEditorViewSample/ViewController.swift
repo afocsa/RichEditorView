@@ -26,8 +26,6 @@ class ViewController: UIViewController {
         editorView.delegate = self
         editorView.inputAccessoryView = toolbar
         editorView.placeholder = "Type some text..."
-        editorView.clientFontSize = 18
-
         toolbar.delegate = self
         toolbar.editor = editorView
 

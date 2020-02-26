@@ -72,8 +72,6 @@ open class CustomWebView: WKWebView {
             webView.scrollView.isScrollEnabled = isScrollEnabled
         }
     }
-
-    public var clientFontSize: Int = 18
     
     /// Whether or not to allow user input in the view.
     open var editingEnabled: Bool = false {
@@ -182,7 +180,12 @@ open class CustomWebView: WKWebView {
     
     public func setHTML(_ value: String) {
         if isEditorLoaded {
-            runJS("RE.setHtml('\(value.escaped)')") { _ in
+            // https://stackoverflow.com/questions/45998220/the-font-looks-like-smaller-in-wkwebview-than-in-uiwebview
+            let headerString = "<header><meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no'></header>"
+            let updatedValue = headerString + value
+            
+            contentHTML = updatedValue
+            runJS("RE.setHtml('\(updatedValue.escaped)')") { _ in
                 self.updateHeight()
             }
         }
@@ -536,9 +539,7 @@ open class CustomWebView: WKWebView {
             // If loading for the first time, we have to set the content HTML to be displayed
             if !isEditorLoaded {
                 isEditorLoaded = true
-                setFontSize(clientFontSize)
                 setHTML(html)
-                contentHTML = html
                 contentEditable = editingEnabledVar
                 placeholder = placeholderText
                 lineHeight = DefaultInnerLineHeight
